@@ -13,4 +13,6 @@
     <string name="get_device_time">Get Device Time</string>
     <string name="set_time_format">Set Time Format</string>
     <string name="get_battery_power">Get Battery Power</string>
+
+    <string name="about_activity">Activities</string>
 </resources>

@@ -14,7 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smartbandsdkdemo.R;
+import com.example.smartbandsdkdemo.ui.activity.ActivityActivities;
 import com.example.smartbandsdkdemo.ui.devicesetting.DeviceSettingActivity;
+import com.example.smartbandsdkdemo.ui.main.MainActivity;
 import com.example.smartbandsdkdemo.util.Utils;
 
 import java.util.List;
@@ -29,7 +31,7 @@ import static cn.appscomm.ota.util.OtaUtil.byteArrayToHexString;
 
 public class WorkingActivity extends AppCompatActivity {
     TextView txt_name, txt_mac, txt_info;
-    Button btn_device_setting, btn_step, btn_sleep, btn_heart, btn_disconnect;
+    Button btn_device_setting, btn_step, btn_sleep, btn_heart, btn_disconnect, btn_activity;
     String TAG = "Working Activity";
     ProgressBar progressBar;
 
@@ -40,19 +42,20 @@ public class WorkingActivity extends AppCompatActivity {
         findViewByIds();
         progressBar.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
-        Toast.makeText(WorkingActivity.this, "Connecting....", Toast.LENGTH_SHORT).show();
+        Toast.makeText(WorkingActivity.this, "Đang kết nối....", Toast.LENGTH_SHORT).show();
         BluetoothSDK.connectByMAC(resultCallBack, txt_mac.getText().toString());
     }
 
     public void findViewByIds() {
         txt_name = findViewById(R.id.text_device_name_working);
         txt_mac = findViewById(R.id.text_device_mac_working);
-        txt_info = findViewById(R.id.text_information);
+        txt_info = findViewById(R.id.text_information_working);
         btn_device_setting = findViewById(R.id.button_device_setting);
         btn_step = findViewById(R.id.button_step);
         btn_sleep = findViewById(R.id.button_sleep);
         btn_heart = findViewById(R.id.button_heart);
         btn_disconnect = findViewById(R.id.button_disconnect);
+        btn_activity = findViewById(R.id.button_about_activity);
         progressBar = findViewById(R.id.progressBar);
 
         Intent intent = getIntent();
@@ -65,9 +68,15 @@ public class WorkingActivity extends AppCompatActivity {
            Intent open_device_setting = new Intent(WorkingActivity.this, DeviceSettingActivity.class);
            startActivity(open_device_setting);
         });
+
+        btn_activity.setOnClickListener(view -> {
+            Intent open_activities = new Intent(WorkingActivity.this, ActivityActivities.class);
+            startActivity(open_activities);
+        });
         btn_disconnect.setOnClickListener(view -> {
-            Toast.makeText(WorkingActivity.this, "Đang tính toán....", Toast.LENGTH_SHORT).show();
             BluetoothSDK.disConnect(resultCallBack);
+            Intent back = new Intent(WorkingActivity.this, MainActivity.class);
+            startActivity(back);
         });
         btn_step.setOnClickListener(view -> {
             progressBar.setVisibility(View.VISIBLE);
@@ -96,7 +105,7 @@ public class WorkingActivity extends AppCompatActivity {
             switch (resultType) {
                 case ResultCallBack.TYPE_CONNECT:
                     progressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(WorkingActivity.this, "connected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WorkingActivity.this, "Đã kết nối", Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "connected");
                     BluetoothSDK.setTransparentPassageCallBack(new ResultCallBack() {
                         @Override
@@ -116,7 +125,7 @@ public class WorkingActivity extends AppCompatActivity {
                     });
                     break;
                 case ResultCallBack.TYPE_DISCONNECT:
-                    Toast.makeText(WorkingActivity.this, "disconnected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WorkingActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "disconnected");
                     break;
                 case ResultCallBack.TYPE_GET_SLEEP_DATA:

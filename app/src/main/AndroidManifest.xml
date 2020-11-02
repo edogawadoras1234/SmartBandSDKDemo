@@ -31,6 +31,7 @@
         </activity>
         <activity android:name=".ui.working.WorkingActivity"/>
         <activity android:name=".ui.devicesetting.DeviceSettingActivity"/>
+        <activity android:name=".ui.activity.ActivityActivities"/>
 
         <service android:name="cn.appscomm.bluetooth.BluetoothLeService" />
         <service android:name="cn.appscomm.ota.OtaService" />
