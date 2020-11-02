@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:text="Blood"
+            android:text="@string/blood"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:text="Calories"
+            android:text="@string/calories"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -53,7 +53,7 @@
             android:layout_height="70dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:text="Set Remind"
+            android:text="@string/set_remind"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -62,7 +62,7 @@
             android:layout_height="70dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:text="Get Remind Data"
+            android:text="@string/get_remind_data"
             tools:ignore="ButtonStyle" />
 
         <Button
@@ -71,7 +71,7 @@
             android:layout_height="70dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:text="Delete Remind Data"
+            android:text="@string/delete_remind_data"
             tools:ignore="ButtonStyle" />
 
     </LinearLayout>
@@ -94,8 +94,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="Chọn chế độ báo thức"
-                android:background="#FF04"/>
+                android:text="@string/chon_che_do_bao_thuc" />
         </LinearLayout>
 
         <LinearLayout
@@ -110,7 +109,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:autofillHints="hour"
-                android:hint="Giờ"
+                android:hint="@string/gio"
                 android:inputType="number" />
 
             <EditText
@@ -118,7 +117,7 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:autofillHints="hour"
-                android:hint="Phút"
+                android:hint="@string/phut"
                 android:inputType="number" />
 
             <EditText
@@ -126,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:autofillHints="hour"
-                android:hint="Lần lặp"
+                android:hint="@string/so_lan_lap"
                 android:inputType="number" />
         </LinearLayout>
         <Button
@@ -134,7 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Đặt nhắc nhở" />
+            android:text="@string/submit_reminder" />
     </LinearLayout>
 
     <ProgressBar

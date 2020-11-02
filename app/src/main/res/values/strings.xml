@@ -11,8 +11,19 @@
 
     <string name="get_device_version">Get Device Version</string>
     <string name="get_device_time">Get Device Time</string>
+    <string name="set_device_time">Set Device Time</string>
     <string name="set_time_format">Set Time Format</string>
     <string name="get_battery_power">Get Battery Power</string>
 
     <string name="about_activity">Activities</string>
+    <string name="so_lan_lap">Lần lặp</string>
+    <string name="phut">Phút</string>
+    <string name="gio">Giờ</string>
+    <string name="chon_che_do_bao_thuc">Chọn chế độ báo thức</string>
+    <string name="delete_remind_data">Delete Remind Data</string>
+    <string name="get_remind_data">Get Remind Data</string>
+    <string name="set_remind">Set Remind</string>
+    <string name="calories">Calories</string>
+    <string name="blood">Blood</string>
+    <string name="submit_reminder">Đặt nhắc nhở</string>
 </resources>
