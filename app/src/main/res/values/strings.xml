@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartBandSDKDemo</string>
+    <string name="app_name">Smart Band SDKDemo</string>
     <string name="start_scan">Start Scan</string>
     <string name="stop_scan">Stop Scan</string>
     <string name="step">Step</string>
@@ -19,7 +19,7 @@
     <string name="so_lan_lap">Lần lặp</string>
     <string name="phut">Phút</string>
     <string name="gio">Giờ</string>
-    <string name="chon_che_do_bao_thuc">Chọn chế độ báo thức</string>
+    <string name="chon_che_do_bao_thuc">Chọn chế độ nhắc nhở</string>
     <string name="delete_remind_data">Delete Remind Data</string>
     <string name="get_remind_data">Get Remind Data</string>
     <string name="set_remind">Set Remind</string>

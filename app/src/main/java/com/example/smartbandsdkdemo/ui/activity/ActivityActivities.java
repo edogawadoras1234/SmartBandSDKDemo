@@ -1,7 +1,6 @@
 package com.example.smartbandsdkdemo.ui.activity;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -84,11 +83,16 @@ public class ActivityActivities extends AppCompatActivity {
         btn_submit.setOnClickListener(v -> {
             //SettingType: 0: EAT, 1:MEDICINE , 2: DRINK, 3: SLEEP, 4: AWAKE, 5: SPORT, 6: MEETING
             txt_info.setText("");
-            progressBar.setVisibility(View.VISIBLE);
-            ReminderData newReminderData = new ReminderData(0, type,
-                    Integer.parseInt(String.valueOf(edt_hour.getText())), Integer.parseInt(String.valueOf(edt_minute.getText())),
-                    Integer.parseInt(String.valueOf(edt_cycler.getText())), true, "content");
-            BluetoothSDK.setReminder(resultCallBack, SettingType.REMINDER_ACTION_NEW, SettingType.REMINDER_PROTOCOL_BASE, null, newReminderData);
+            if (edt_hour.getText().toString().length() == 0 || edt_minute.getText().toString().length() == 0 || edt_cycler.getText().toString().length() == 0) {
+                Toast.makeText(this, "Không được bỏ trống thời gian!", Toast.LENGTH_SHORT).show();
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+                ReminderData newReminderData = new ReminderData(0, type,
+                        Integer.parseInt(String.valueOf(edt_hour.getText())), Integer.parseInt(String.valueOf(edt_minute.getText())),
+                        Integer.parseInt(String.valueOf(edt_cycler.getText())), true, "Loi Nhan");
+                BluetoothSDK.setReminder(resultCallBack, SettingType.REMINDER_ACTION_NEW, SettingType.REMINDER_PROTOCOL_BASE, null, newReminderData);
+
+            }
         });
 
         btn_get_remind_data.setOnClickListener(v -> {
@@ -100,7 +104,7 @@ public class ActivityActivities extends AppCompatActivity {
         btn_del_remind_data.setOnClickListener(v -> {
             progressBar.setVisibility(View.VISIBLE);
             txt_info.setText("");
-            BluetoothSDK.setReminder(resultCallBack, SettingType.REMINDER_ACTION_DELETE_ALL, SettingType.REMINDER_PROTOCOL_BASE, null, null);
+            BluetoothSDK.setReminder(resultCallBack, SettingType.REMINDER_ACTION_DELETE_ALL, SettingType.REMINDER_PROTOCOL_BASE_WITH_SHOCK, null, null);
         });
         btn_choose_mode_remind.setOnClickListener(v -> chooseType());
     }
@@ -149,41 +153,38 @@ public class ActivityActivities extends AppCompatActivity {
     };
 
     private void chooseType() {
-        String[] datas = {"Eat", "Medicine", "Drink", "Sleep", "Awake", "Sport", "Meeting"};
+        String[] datas = {"Eat", "Medicine", "Drink", "Sleep", "Awake", "Break Time", "Meeting"};
         AlertDialog.Builder b = new AlertDialog.Builder(this);
-        b.setSingleChoiceItems(datas, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        type = 0;
-                        Toast.makeText(ActivityActivities.this, "Choose Eat", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        type = 1;
-                        Toast.makeText(ActivityActivities.this, "Choose Medicine", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        type = 2;
-                        Toast.makeText(ActivityActivities.this, "Choose Drink", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 3:
-                        type = 3;
-                        Toast.makeText(ActivityActivities.this, "Choose Sleep", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 4:
-                        type = 4;
-                        Toast.makeText(ActivityActivities.this, "Choose Awake", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 5:
-                        type = 5;
-                        Toast.makeText(ActivityActivities.this, "Choose Sport", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 6:
-                        type = 6;
-                        Toast.makeText(ActivityActivities.this, "Choose Meeting", Toast.LENGTH_SHORT).show();
-                        break;
-                }
+        b.setSingleChoiceItems(datas, 0, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    type = 0;
+                    Toast.makeText(ActivityActivities.this, "Choose Eat", Toast.LENGTH_SHORT).show();
+                    break;
+                case 1:
+                    type = 1;
+                    Toast.makeText(ActivityActivities.this, "Choose Medicine", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    type = 2;
+                    Toast.makeText(ActivityActivities.this, "Choose Drink", Toast.LENGTH_SHORT).show();
+                    break;
+                case 3:
+                    type = 3;
+                    Toast.makeText(ActivityActivities.this, "Choose Sleep", Toast.LENGTH_SHORT).show();
+                    break;
+                case 4:
+                    type = 4;
+                    Toast.makeText(ActivityActivities.this, "Choose Awake", Toast.LENGTH_SHORT).show();
+                    break;
+                case 5:
+                    type = 5;
+                    Toast.makeText(ActivityActivities.this, "Choose Break Time", Toast.LENGTH_SHORT).show();
+                    break;
+                case 6:
+                    type = 6;
+                    Toast.makeText(ActivityActivities.this, "Choose Meeting", Toast.LENGTH_SHORT).show();
+                    break;
             }
         });
         b.setTitle("Choose Reminder: ");

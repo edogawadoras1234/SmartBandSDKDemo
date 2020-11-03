@@ -2,8 +2,11 @@ package com.example.smartbandsdkdemo.ui.main;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,12 +16,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.smartbandsdkdemo.db.model.Device;
 import com.example.smartbandsdkdemo.R;
+import com.example.smartbandsdkdemo.db.model.Device;
+import com.example.smartbandsdkdemo.service.PhonecallReceiver;
+import com.example.smartbandsdkdemo.ui.working.WorkingActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +36,12 @@ import cn.appscomm.bluetoothsdk.interfaces.BluetoothScanCallBack;
 public class MainActivity extends AppCompatActivity {
 
     Button btn_scan, btn_stop;
-    private final String TAG = "Main Activity";
+    private final String TAG = "Main Activity TAG";
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     RecyclerView recyclerView;
     DeviceListAdapter deviceListAdapter;
     List<Device> deviceList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         btn_scan = findViewById(R.id.button_scan);
         btn_stop = findViewById(R.id.button_stop);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -50,38 +58,49 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(deviderItemDecoration);
 
         btn_stop.setOnClickListener(view -> {
-            Toast.makeText(this, "Stop scan bluetooth", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Dừng quét bluetooth", Toast.LENGTH_SHORT).show();
             BluetoothSDK.stopScan();
         });
 
         btn_scan.setOnClickListener(view -> {
-            if (deviceList!=null){
-                deviceList.clear();
-            }
-            if (BluetoothSDK.startScan(new BluetoothScanCallBack() {
-                @Override
-                public void onLeScan(BluetoothDevice bluetoothDevice, int rssi) {
-                    Log.i(TAG, "deviceName : " + bluetoothDevice.getName() + " MAC : " + bluetoothDevice.getAddress() + " rssi :" + rssi);
-                    for (Device device : deviceList) {
-                        if (device.getName().equals(bluetoothDevice.getName())) {
-                            return;
+            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+            if (!mBluetoothAdapter.isEnabled() && !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(this, "Xin hãy mở Bluetooth và GPS để quét Bluetooth!", Toast.LENGTH_SHORT).show();
+            } else if (!mBluetoothAdapter.isEnabled()) {
+                Toast.makeText(this, "Xin hãy mở Bluetooth để quét Bluetooth!", Toast.LENGTH_SHORT).show();
+            } else if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(this, "Xin hãy mở GPS để quét Bluetooth!", Toast.LENGTH_SHORT).show();
+            } else {
+                if (deviceList != null) {
+                    deviceList.clear();
+                }
+                if (BluetoothSDK.startScan(new BluetoothScanCallBack() {
+                    @Override
+                    public void onLeScan(BluetoothDevice bluetoothDevice, int rssi) {
+                        Log.i(TAG, "deviceName : " + bluetoothDevice.getName() + " MAC : " + bluetoothDevice.getAddress() + " rssi :" + rssi);
+                        for (Device device : deviceList) {
+                            if (device.getName().equals(bluetoothDevice.getName())) {
+                                return;
+                            }
                         }
+                        String name = bluetoothDevice.getName();
+                        String mac = bluetoothDevice.getAddress();
+                        Device device = new Device(name, mac, rssi);
+                        deviceList.add(device);
+                        deviceListAdapter = new DeviceListAdapter(MainActivity.this, deviceList);
+                        recyclerView.setAdapter(deviceListAdapter);
+                        deviceListAdapter.notifyDataSetChanged();
                     }
-                    String name = bluetoothDevice.getName();
-                    String mac = bluetoothDevice.getAddress();
-                    Device device = new Device(name, mac, rssi);
-                    deviceList.add(device);
-                    deviceListAdapter= new DeviceListAdapter(MainActivity.this, deviceList);
-                    recyclerView.setAdapter(deviceListAdapter);
-                    deviceListAdapter.notifyDataSetChanged();
-                }
 
-                @Override
-                public void onStopScan(boolean b) {
+                    @Override
+                    public void onStopScan(boolean b) {
 
+                    }
+                }, "")) {
+                    Toast.makeText(MainActivity.this, "Start scan", Toast.LENGTH_SHORT).show();
                 }
-            }, "")) {
-                Toast.makeText(MainActivity.this, "start scan", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -90,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ObsoleteSdkInt")
     private void locationPermiss() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android M Permission check 
             if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Ứng dụng cần truy cập vị trí của bạn");

@@ -1,7 +1,11 @@
 package com.example.smartbandsdkdemo.ui.working;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,18 +14,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.smartbandsdkdemo.R;
+import com.example.smartbandsdkdemo.service.PhonecallReceiver;
 import com.example.smartbandsdkdemo.ui.activity.ActivityActivities;
 import com.example.smartbandsdkdemo.ui.devicesetting.DeviceSettingActivity;
 import com.example.smartbandsdkdemo.ui.main.MainActivity;
 import com.example.smartbandsdkdemo.util.Utils;
 
+import java.util.Date;
 import java.util.List;
 
 import cn.appscomm.bluetoothsdk.app.BluetoothSDK;
+import cn.appscomm.bluetoothsdk.app.SettingType;
 import cn.appscomm.bluetoothsdk.interfaces.ResultCallBack;
 import cn.appscomm.bluetoothsdk.model.HeartRateData;
 import cn.appscomm.bluetoothsdk.model.SleepData;
@@ -32,7 +42,7 @@ import static cn.appscomm.ota.util.OtaUtil.byteArrayToHexString;
 public class WorkingActivity extends AppCompatActivity {
     TextView txt_name, txt_mac, txt_info;
     Button btn_device_setting, btn_step, btn_sleep, btn_heart, btn_disconnect, btn_activity;
-    String TAG = "Working Activity";
+    String TAG = "Working Activity TAG";
     ProgressBar progressBar;
 
     @Override
@@ -44,6 +54,37 @@ public class WorkingActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         Toast.makeText(WorkingActivity.this, "Đang kết nối....", Toast.LENGTH_SHORT).show();
         BluetoothSDK.connectByMAC(resultCallBack, txt_mac.getText().toString());
+
+        BluetoothSDK.setSwitchSetting(resultCallBack, SettingType.SWITCH_SMS, true);
+        BluetoothSDK.setSwitchSetting(resultCallBack, SettingType.SWITCH_INCOME_CALL, true);
+        BluetoothSDK.setSwitchSetting(resultCallBack, SettingType.SWITCH_MISS_CALL, true);
+        BluetoothSDK.setSwitchSetting(resultCallBack, SettingType.SWITCH_SOCIAL, true);
+
+        PhonecallReceiver broadcast;
+        broadcast = new PhonecallReceiver();
+        IntentFilter filter = new IntentFilter("android.intent.action.PHONE_STATE");
+        registerReceiver(broadcast, filter);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 1);
+            }
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(WorkingActivity.this, Manifest.permission.READ_PHONE_STATE) ==
+                        PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Đã được cho phép!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Quyền không được cấp!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void findViewByIds() {
@@ -65,8 +106,8 @@ public class WorkingActivity extends AppCompatActivity {
         txt_mac.setText(mac);
 
         btn_device_setting.setOnClickListener(view -> {
-           Intent open_device_setting = new Intent(WorkingActivity.this, DeviceSettingActivity.class);
-           startActivity(open_device_setting);
+            Intent open_device_setting = new Intent(WorkingActivity.this, DeviceSettingActivity.class);
+            startActivity(open_device_setting);
         });
 
         btn_activity.setOnClickListener(view -> {
@@ -165,11 +206,11 @@ public class WorkingActivity extends AppCompatActivity {
                         Toast.makeText(WorkingActivity.this, "No heart rate data", Toast.LENGTH_SHORT).show();
                     } else {
                         List<HeartRateData> heartRateDataList = (List<HeartRateData>) objects[0];
-                        for(int i = 0; i < heartRateDataList.size(); i++){
+                        for (int i = 0; i < heartRateDataList.size(); i++) {
                             total_heart_rate = total_heart_rate + heartRateDataList.get(i).avg;
                         }
                         txt_info.setText(heartRateDataList.toString());
-                        int rate_avg = total_heart_rate/heartRateDataList.size();
+                        int rate_avg = total_heart_rate / heartRateDataList.size();
                         Toast.makeText(WorkingActivity.this, "Nhịp tim trung bình: " + rate_avg, Toast.LENGTH_SHORT).show();
                         Log.i(TAG, "Tim:" + rate_avg);
                     }

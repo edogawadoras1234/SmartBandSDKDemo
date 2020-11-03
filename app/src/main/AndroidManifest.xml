@@ -13,6 +13,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
 
     <application
         android:name=".util.GlobalApp"
@@ -35,6 +37,12 @@
 
         <service android:name="cn.appscomm.bluetooth.BluetoothLeService" />
         <service android:name="cn.appscomm.ota.OtaService" />
+
+        <receiver android:name=".service.PhonecallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
